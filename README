@@ -1,0 +1,5 @@
+fakemusl is a tool that generates fake libc object files;
+it is useful for bootstrapping a cross-toolchain when you
+do not have a cross-compiler for the target architecture
+(but you *do* have a cross-assembler)
+

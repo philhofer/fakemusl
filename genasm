@@ -1,0 +1,27 @@
+#!/bin/sh -e
+
+# this file generates the assembly stubs
+# using the contents of crt files and libc.a,
+# as well as the archive ordering in libc.a.list
+
+[ -z $LIBDIR ] && LIBDIR="/usr/lib"
+objects="crt1.o rcrt1.o"
+for obj in $objects; do
+	f="${LIBDIR}/${obj}"
+	readelf -s $f | awk -f readelf2asm.awk > ${obj%.o}.s
+done
+
+# these are identical
+cp crt1.s Scrt1.s
+
+# now for libc.a
+ar t ${LIBDIR}/libc.a > libc.a.list
+exdir="libc.a.d"
+[ -d $exdir ] && rm -rf $exdir
+mkdir -p $exdir
+cd $exdir
+ar x ${LIBDIR}/libc.a
+for obj in *.lo; do
+	readelf -s $obj | awk -f ../readelf2asm.awk > ${obj%.lo}.s
+	rm $obj
+done
