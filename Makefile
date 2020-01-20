@@ -13,13 +13,13 @@ CRTOBJS=$(CRTS:.s=.o)
 
 LIBC_OBJS=$(shell cat libc.a.list)
 libc.a: $(LIBC_OBJS:%=libc.a.d/%)
-	cd libc.a.d; ar Dcr ../libc.a $(LIBC_OBJS)
+	cd libc.a.d; $(AR) Dcr ../libc.a $(LIBC_OBJS)
 
 libssp_nonshared.a: libssp_nonshared.a.d/__stack_chk_fail_local.o
-	ar Dcr libssp_nonshared.a $^
+	$(AR) Dcr libssp_nonshared.a $^
 
 %.a:
-	ar Dcr $@
+	$(AR) Dcr $@
 
 .PHONY: all
 all: $(CRTOBJS) libc.a libssp_nonshared.a $(EXTRA_ARCHIVES)
