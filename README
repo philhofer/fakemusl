@@ -1,5 +1,28 @@
-fakemusl is a tool that generates fake libc object files;
-it is useful for bootstrapping a cross-toolchain when you
-do not have a cross-compiler for the target architecture
-(but you *do* have a cross-assembler)
+fakemusl is a hack for building a cross-gcc
+
+When building gcc for cross-compilation, the configure scripts
+for target system libraries (libgcc, libatomic, libstdc++, etc.)
+want to check that linking binaries using the newly-built
+cross-gcc actually works. However, the cross-gcc you're
+building is the one you'd use to build a libc for the
+target system in the first place, so there's an unfortunate
+circular dependency between the target system libc and your
+gcc that needs to be broken.
+
+The workaround implemented here is simply to generate
+a pure-assembly libc.a and friends that defines all of
+the same symbols as an actual musl libc.a. (These symbols
+all point to zeros, so you can't actually produce a working
+executable, but that's not the point; we just need linking
+to succeed.)
+
+To build: 'make AS=<as-for-target> AR=<ar-for-target>'
+To install: 'make PREFIX=<prefix> DESTDIR=<destdir> install'
+
+This goes without saying, but you should not install
+any of these objects in your root filesystem. Instead,
+you should *temporarily* install them in the sysroot
+of the target system while configuring and building gcc.
+(Then, you should compile a *real* musl and replace
+these installed objects.)
 

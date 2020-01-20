@@ -4,9 +4,6 @@
 }
 prefix="${DESTDIR}${PREFIX}/lib"
 echo "installing to" $prefix
-[ -z $prefix ] && {
-	echo "missing PREFIX and/or DESTDIR"
-}
 for x in *.a; do
 	install -D -m 644 $x "$prefix/$x"
 done
